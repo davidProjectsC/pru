@@ -23,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'httponly' => false,
             'samesite' => 'Lax',
         ]);
-        header('Location: /public/pru.php'); exit;
+        header('Location: /portales/pru/public/pru.php'); exit;
     } else {
         $msg = 'Usuario o contraseña incorrectos.';
     }
