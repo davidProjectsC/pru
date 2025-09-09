@@ -55,10 +55,10 @@ function login(PDO $pdo, string $usr, string $pass): bool {
     }
 
     // 2) Si ya migraste a password_hash(), descomenta:
-     if (password_verify($pass, $stored)) {
-         $_SESSION['usuario'] = $usrU;
-         return true;
-     }
+    // if (password_verify($pass, $stored)) {
+    //     $_SESSION['usuario'] = $usrU;
+    //     return true;
+    // }
 
     return false;
 }
