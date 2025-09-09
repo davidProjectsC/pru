@@ -50,7 +50,7 @@ $cols = whitelist_fields($campos);
 $camposSafe = implode(',', $cols);
 
 // --- vista navegación superior (roles hardcodeados, como en el ASP) ---
-$accestot = ['MPOLANCO','ESTEBANR','DRUIZ','ABASTA'];
+$accestot = ['MPOLANCO','ESTEBANR','DRUIZ','ABASTA','DCHAN'];
 $menuAutoriz = in_array($usr, $accestot, true);
 
 // --- Helpers ---
@@ -64,35 +64,114 @@ function fmt_num($n): string {
 ?>
 <!doctype html>
 <html lang="es">
-<head>
-<meta charset="utf-8" />
-<title>Comercial Roche</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<style>
-body { font-family: Verdana, Geneva, sans-serif; font-size: 12px; }
-table { border-collapse: collapse; font-size: 12px; }
-td, th { border: 1px solid #ccc; padding: 4px 6px; }
-.top { width:100%; background:#003366; color:#fff; }
-.top a { color:#fff; text-decoration:none; padding: 0 8px; }
-.top a:hover { color:#ff0; }
-.small{ font-size: 11px; }
-</style>
-</head>
-<body>
-<?php if ($menuAutoriz): ?>
-<table class="top"><tr>
-  <td><b>&nbsp;&nbsp;<a href="/public/pru.php">Reporte de ventas</a> |</b></td>
-  <td><b>&nbsp;&nbsp;<a href="/public/pru.php?pag=2">Autorización de Gastos</a> |</b></td>
-  <td></td>
-</tr></table>
-<?php endif; ?>
 
-<?php
+<head>
+    <meta charset="utf-8" />
+    <title>Comercial Roche</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+    body {
+        font-family: Verdana, Geneva, sans-serif;
+        font-size: 10px;
+    }
+
+    table {
+        border-collapse: collapse;
+        font-size: 10px;
+    }
+
+    td,
+    th {
+        border: 1px solid #ccc;
+        padding: 4px 6px;
+    }
+
+    .top {
+        width: 100%;
+        background: #003366;
+        color: #fff;
+    }
+
+    .top a {
+        color: #fff;
+        text-decoration: none;
+        padding: 0 8px;
+    }
+
+    .top a:hover {
+        color: #ff0;
+    }
+
+    .small {
+        font-size: 10px;
+    }
+    </style>
+</head>
+
+<body>
+    <?php if ($menuAutoriz): ?>
+    <table class="top">
+        <tr>
+            <td><b>&nbsp;&nbsp;<a href="/portales/pru/public/pru.php">Reporte de ventas</a> |</b></td>
+            <td><b>&nbsp;&nbsp;<a href="/portales/pru/public/pru.php?pag=2">Autorización de Gastos</a> |</b></td>
+            <td></td>
+        </tr>
+    </table>
+    <?php endif; ?>
+
+    <?php
+
 if ($pag === '' || $pag === null) {
     // ------------------------
     // REPORTE VENTAS (Normal/Dif)
     // ------------------------
     // Si el usuario escribe texto en cliente sin guión, mostrar catálogo de clientes coincidentes (búsqueda)
+    ?>
+    <form name="f2" method="post" action="pru.php">
+        <select name="campos" class="verd" id="campos" onChange="document.f2.submit();">
+            <!-- aquí puedes generar opciones dinámicas en PHP si lo requieres -->
+        </select>
+
+        <label for="mes"></label>
+        <select name="mes" class="verd" id="mes" onChange="document.f2.tipo.value='M'; document.f2.submit();">
+            <option value="">mes</option>
+            <option value="año" <?= ($mes == "año") ? "selected" : "" ?>>año</option>
+            <?php for ($i = 1; $i <= 12; $i++): ?>
+            <?php $val = str_pad(($i.""), 2, "0", STR_PAD_LEFT); ?>
+            <option value="<?= $val ?>" <?= ($mes == $val) ? "selected" : "" ?>><?= $val ?></option>
+            <?php endfor; ?>
+        </select>
+
+        <label for="anio"></label>
+        <select name="anio" class="verd" id="anio" onChange="document.f2.submit();">
+            <?php for ($i = 0; $i <= 10; $i++): ?>
+            <?php $year = date('Y') - $i; ?>
+            <option value="<?= $year ?>" <?= ($anio == $year) ? "selected" : "" ?>><?= $year ?></option>
+            <?php endfor; ?>
+        </select>
+
+        <br><br>
+        F.Ini:
+        <input name="fcini" type="text" value="<?= htmlspecialchars($fcini) ?>" class="verd"
+            onChange="document.f2.tipo.value='A'">
+        F.Fin:
+        <input name="fcfin" type="text" value="<?= htmlspecialchars($fcfin) ?>" class="verd"
+            onChange="document.f2.tipo.value='A'">
+
+        <br><br>
+        <select name="tip" class="verd" id="tip" onChange="cambia(); document.f2.submit();">
+            <option value="" <?= ($tip == "") ? "selected" : "" ?>>Normal</option>
+            <option value="Dif" <?= ($tip == "Dif") ? "selected" : "" ?>>Dif</option>
+        </select>
+
+        Cli:
+        <input name="cliente" type="text" value="<?= htmlspecialchars($cliente) ?>" class="verd">
+
+        &nbsp;&nbsp;
+        <input name="consultar" type="submit" class="verd" id="consultar" value="Enviar">
+        <input type="hidden" name="tipo" value="">
+    </form>
+    <?php
     if ($cliente !== '' && strpos($cliente, '-') === false) {
         $sqlCli = "SELECT TOP 100 cliente, estatus, agente, nombre FROM Cte WHERE (cliente LIKE ? OR nombre LIKE ? OR nombrecorto LIKE ?)";
         $like = '%' . $cliente . '%';
@@ -106,7 +185,7 @@ if ($pag === '' || $pag === null) {
                 $stt   = htmlspecialchars((string)$c['estatus'], ENT_QUOTES, 'UTF-8');
                 $agt   = htmlspecialchars((string)$c['agente'], ENT_QUOTES, 'UTF-8');
                 $nom   = htmlspecialchars((string)$c['nombre'], ENT_QUOTES, 'UTF-8');
-                echo "<tr><td style='background:#003366'><a style='color:#fff' href='/public/pru.php?cliente={$clave}'>{$clave}</a></td><td>{$stt}</td><td>{$agt}</td><td>{$nom}</td></tr>";
+                echo "<tr><td style='background:#003366'><a style='color:#fff' href='/portales/pru/public/pru.php?cliente={$clave}'>{$clave}</a></td><td>{$stt}</td><td>{$agt}</td><td>{$nom}</td></tr>";
             }
             echo '</table>';
         }
@@ -201,7 +280,7 @@ ORDER BY $camposSafe;
 
         // Render tabla
         echo '<h3>Reporte de ventas</h3>';
-        echo '<div class="small">Rango: ' . htmlspecialchars($fini->format('Y-m-d')) . ' — ' . htmlspecialchars($ffin->format('Y-m-d')) . '</div>';
+        echo '<div class="">Rango: ' . htmlspecialchars($fini->format('Y-m-d')) . ' — ' . htmlspecialchars($ffin->format('Y-m-d')) . '</div>';
         echo '<table><tr>';
         foreach ($cols as $c) echo '<th>'.htmlspecialchars($c).'</th>';
         echo '<th>Año Ant.</th><th>Venta</th><th>Presup.</th></tr>';
@@ -232,12 +311,16 @@ ORDER BY $camposSafe;
     $dbName = $aemp[0] ?: 'COSYSA';
 
     // Conexión secundaria (a primera empresa de la lista)
-    $dsn2 = "sqlsrv:Server=INTELISIS;Database={$dbName}";
+    if ($_SERVER['SERVER_NAME'] == 'localhost') {
+        $dsn2 = "sqlsrv:Server=INTELISIS;Database={$dbName}";
+    }else{
+        $dsn2 = "dblib:host=INTELISIS;dbname={$dbName}";
+    }
+
     try {
         $pdo2 = new PDO($dsn2, $DB_USER, $DB_PASS, [
             PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-            PDO::SQLSRV_ATTR_ENCODING    => PDO::SQLSRV_ENCODING_UTF8,
         ]);
     } catch (Throwable $e) {
         echo '<div style="color:#b00">Error conexión secundaria: '.htmlspecialchars($e->getMessage(), ENT_QUOTES, 'UTF-8').'</div>';
@@ -300,6 +383,35 @@ ORDER BY $camposSafe;
     echo '<p>Sección no encontrada.</p>';
 }
 ?>
-<p style="margin-top:24px"><a href="/public/salir.php">Salir</a></p>
+    <p style="margin-top:24px"><a href="/public/salir.php">Salir</a></p>
 </body>
+<script>
+var Normal = new Array("Categoria,Presentacion,Marca", "Distrito,Categoria", "Distrito,Categoria,Presentacion,Marca",
+    "Distrito,Agente", "Agente,Categoria", "Agente,Categoria,Presentacion,Marca", "Distrito,Categoria,Agente")
+var Diferencia = new Array("Distrito", "Distrito,Agente", "Presentacion,Marca", "Distrito,Agente,CteNombre",
+    "Distrito,Agente,CteNombre,Articulo")
+
+function llena(A, V) {
+    na = A.length;
+    document.f2.campos.length = na
+    console.log(na)
+    for (i = 0; i < na; i++) {
+        document.f2.campos.options[i].value = A[i]
+        document.f2.campos.options[i].text = A[i]
+        if (V == A[i]) {
+            document.f2.campos.options[i].selected = true
+        }
+    }
+}
+
+function cambia() {
+    if (document.f2.tip.selectedIndex == 0) {
+        llena(Normal, Normal[0]);
+    } else {
+        llena(Diferencia, Diferencia[0]);
+    }
+}
+cambia();
+</script>
+
 </html>
