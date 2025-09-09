@@ -11,6 +11,7 @@ $msg = isset($_GET['msg']) ? (string)$_GET['msg'] : '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $usr  = isset($_POST['usuario']) ? (string)$_POST['usuario'] : '';
     $pass = isset($_POST['pass']) ? (string)$_POST['pass'] : '';
+    //echo login($pdo, $usr, $pass);exit;
     if ($usr === '' || $pass === '') {
         $msg = 'Usuario y contraseña son requeridos.';
     } else if (login($pdo, $usr, $pass)) {

@@ -31,12 +31,12 @@ function require_login(): void {
 
 function legacy_hash(string $pass): string {
     // Emula el cálculo cliente para compatibilidad temporal
-    $p = md5(strtoupper($pass));
-    $p = "KnTZyc0MBadRkAA{$p}0skkrlFuO/i";
+    $p = strtolower(md5(strtoupper($pass)));
+    $p = "KnTZyc0MBadRkAA".$p."0skkrlFuO/i";
     return (md5($p));
 }
 
-function login(PDO $pdo, string $usr, string $pass): bool {
+function login(PDO $pdo, string $usr, string $pass) {
     start_secure_session();
     $usrU = strtoupper(trim($usr));
     if ($usrU === '' || $pass === '') return false;
@@ -46,7 +46,7 @@ function login(PDO $pdo, string $usr, string $pass): bool {
     $row = $stmt->fetch();
     if (!$row) return false;
 
-    $stored = strtoupper((string)$row['Contrasena']);
+    $stored = ((string)$row['Contrasena']);
 
     // 1) Soporte temporal del hash legado
     if ($stored === legacy_hash($pass)) {
@@ -59,8 +59,9 @@ function login(PDO $pdo, string $usr, string $pass): bool {
     //     $_SESSION['usuario'] = $usrU;
     //     return true;
     // }
-
     return false;
+    return $stored. '|'. legacy_hash($pass);
+    //return false;
 }
 
 function logout_and_redirect(): void {
