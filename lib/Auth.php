@@ -33,7 +33,7 @@ function legacy_hash(string $pass): string {
     // Emula el cálculo cliente para compatibilidad temporal
     $p = strtoupper($pass);
     $p = "KnTZyc0MBadRkAA{$p}0skkrlFuO/i";
-    return strtoupper(md5($p));
+    return (md5($p));
 }
 
 function login(PDO $pdo, string $usr, string $pass): bool {
