@@ -31,7 +31,7 @@ function require_login(): void {
 
 function legacy_hash(string $pass): string {
     // Emula el cálculo cliente para compatibilidad temporal
-    $p = strtoupper($pass);
+    $p = md5(strtoupper($pass));
     $p = "KnTZyc0MBadRkAA{$p}0skkrlFuO/i";
     return (md5($p));
 }
