@@ -383,7 +383,7 @@ ORDER BY $camposSafe;
     echo '<p>Sección no encontrada.</p>';
 }
 ?>
-    <p style="margin-top:24px"><a href="/public/salir.php">Salir</a></p>
+    <p style="margin-top:24px"><a href="/portales/pru/public/salir.php">Salir</a></p>
 </body>
 <script>
 var Normal = new Array("Categoria,Presentacion,Marca", "Distrito,Categoria", "Distrito,Categoria,Presentacion,Marca",

@@ -25,7 +25,7 @@ function start_secure_session(): void {
 function require_login(): void {
     start_secure_session();
     if (empty($_SESSION['usuario'])) {
-        header('Location: /public/login.php?msg=' . urlencode('Inicia sesión')); exit;
+        header('Location: /portales/pru/public/login.php?msg=' . urlencode('Inicia sesión')); exit;
     }
 }
 
@@ -72,6 +72,6 @@ function logout_and_redirect(): void {
         setcookie(session_name(), '', time()-42000, $params['path'], $params['domain'], $params['secure'], $params['httponly']);
     }
     session_destroy();
-    header('Location: /public/login.php?msg=' . urlencode('Sesión cerrada'));
+    header('Location: /portales/pru/public/login.php?msg=' . urlencode('Sesión cerrada'));
     exit;
 }
