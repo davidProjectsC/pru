@@ -47,7 +47,7 @@ function rangoFechas(string $mes, string $anio, string $fcini, string $fcfin): a
 
 list($fini, $ffin) = rangoFechas($mes, $anio, $fcini, $fcfin);
 $cols = whitelist_fields($campos);
-$camposSafe = implode(',', $cols);
+ $camposSafe = implode(',', $cols);
 
 // --- vista navegación superior (roles hardcodeados, como en el ASP) ---
 $accestot = ['MPOLANCO','ESTEBANR','DRUIZ','ABASTA','DCHAN'];
@@ -404,14 +404,14 @@ function llena(A, V) {
     }
 }
 
-function cambia() {
+function cambia(option) {
     if (document.f2.tip.selectedIndex == 0) {
-        llena(Normal, Normal[0]);
+        llena(Normal, option);
     } else {
-        llena(Diferencia, Diferencia[0]);
+        llena(Diferencia, option);
     }
 }
-cambia();
+cambia('<?=$camposSafe?>');
 </script>
 
 </html>
